@@ -89,3 +89,16 @@ def decoder(runs):
             raise ValueError(f"Invalid run: {run}")
 
 print(list(decoder(runs)))
+
+
+def decode(encoded_stream, output_stream):
+    while encoded_stream.hasNext():
+        block = encoded_stream.next()
+
+        if isinstance(block, BPBlock):
+            for x in block.values:
+                output_stream.write(x)
+
+        elif isinstance(block, RLEBlock):
+            for _ in range(block.count):
+                output_stream.write(block.value)
