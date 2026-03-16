@@ -17,8 +17,8 @@ class SnapshotSet:
 
         # Current live elements: value -> latest live node
         self._live: Dict[int, SnapshotSet._Node] = {}
-
-        # Append-only linked list of all successful insertions (preserves insertion order history)
+        #
+        #         # Append-only linked list of all successful insertions (preserves insertion order history)
         self._head: Optional[SnapshotSet._Node] = None
         self._tail: Optional[SnapshotSet._Node] = None
 

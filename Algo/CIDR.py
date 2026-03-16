@@ -11,25 +11,21 @@ class IpFirewallCoverageChecker:
                 ip_str = cidr
                 prefix = 32
             ip_int = self.ip_to_int(ip_str)
-            mask = self.prefix_to_mask(prefix)
+            mask = ((1 << prefix) - 1) << (32 - prefix)
 
             network = ip_int & mask
 
-            self.rules.append((is_allowed, network, prefix, mask))
+            self.rules.append((is_allowed, network, mask))
 
     def AllowAccess(self, ip: str):
         ip_int = self.ip_to_int(ip)
-        for is_allowed, network, prefix, mask in self.rules:
+        for is_allowed, network, mask in self.rules:
             if (ip_int & mask) == network:
                 return is_allowed
 
     def ip_to_int(self, ip):
         a, b, c, d = map(int, ip.split("."))
         return (a << 24) | (b << 16) | (c << 8) | d
-
-    def prefix_to_mask(self, prefix):
-        return ((1 << prefix) - 1) << (32 - prefix)
-
 
 
 class IpFirewallCoverageChecker:

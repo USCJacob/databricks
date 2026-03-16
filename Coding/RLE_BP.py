@@ -61,4 +61,31 @@ def encode_stream(stream):
 
 
 values = [1,2,3,4,5,5,5,5,5,5,5,5,5,5]
-print(list(encode_stream(values)))
+runs = list(encode_stream(values))
+print(runs)
+
+
+
+def decoder(runs):
+    for run in runs:
+        run = run.strip()
+
+        if run.startswith("RLE[") and run.endswith("]"):
+            inside = run[4:-1]   # 例如 "5,8"
+            value_str, count_str = inside.split(",")
+            value = int(value_str)
+            count = int(count_str)
+
+            for _ in range(count):
+                yield value
+
+        elif run.startswith("BP[") and run.endswith("]"):
+            inside = run[3:-1]   # 例如 "1,2,3"
+            if inside:           # 防止空 BP[]
+                for x in inside.split(","):
+                    yield int(x)
+
+        else:
+            raise ValueError(f"Invalid run: {run}")
+
+print(list(decoder(runs)))

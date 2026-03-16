@@ -1,15 +1,15 @@
-class LazyArray:
-    def __init__(self, arr, funcs = None):
-        # TODO: Implement __init__ logic.
-        self.arr = arr
-        self.funcs = funcs[:] if funcs else []
+from typing import Callable, List
 
-    def map(self, fn):
-        # TODO: Implement map logic.
+
+class LazyArray:
+    def __init__(self, arr: List[int], funcs=None):
+        self.arr = arr
+        self.funcs = funcs if funcs is not None else []
+
+    def map(self, fn: Callable[[int], int]) -> "LazyArray":
         return LazyArray(self.arr, self.funcs + [fn])
 
-    def indexOf(self, target):
-        # TODO: Implement indexOf logic.
+    def indexOf(self, target: int) -> int:
         for i, x in enumerate(self.arr):
             val = x
             for fn in self.funcs:
@@ -18,6 +18,41 @@ class LazyArray:
                 return i
         return -1
 
+from typing import Callable, List, Optional
+
+
+class LazyArray:
+    def __init__(
+        self,
+        arr: List[int],
+        fn: Optional[Callable[[int], int]] = None,
+        prev: Optional["LazyArray"] = None
+    ):
+        self.arr = arr
+        self.fn = fn
+        self.prev = prev
+
+    def map(self, fn: Callable[[int], int]) -> "LazyArray":
+        return LazyArray(self.arr, fn, self)
+
+    def _collect_funcs(self):
+        funcs = []
+        cur = self
+        while cur is not None and cur.fn is not None:
+            funcs.append(cur.fn)
+            cur = cur.prev
+        funcs.reverse()
+        return funcs
+
+    def indexOf(self, target: int) -> int:
+        funcs = self._collect_funcs()
+        for i, x in enumerate(self.arr):
+            val = x
+            for fn in funcs:
+                val = fn(val)
+            if val == target:
+                return i
+        return -1
 
 
 if __name__ == "__main__":

@@ -1,5 +1,4 @@
 from typing import List, Optional
-
 class TicTacToe:
     def __init__(self, n: int, m: int, k: int):
         # TODO: Initialize TicTacToe
